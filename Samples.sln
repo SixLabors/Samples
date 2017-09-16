@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChangeDefaultEncoderOptions
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvatarWithRoundedCorner", "ImageSharp\AvatarWithRoundedCorner\AvatarWithRoundedCorner.csproj", "{855B2106-EF59-4AA0-ADBE-5C874ADA027E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawingTextAlongAPath", "ImageSharp\DrawingTextAlongAPath\DrawingTextAlongAPath.csproj", "{26CDFAA6-E8EE-4A77-A478-DA1BCFA62F3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,18 @@ Global
 		{855B2106-EF59-4AA0-ADBE-5C874ADA027E}.Release|x64.Build.0 = Release|Any CPU
 		{855B2106-EF59-4AA0-ADBE-5C874ADA027E}.Release|x86.ActiveCfg = Release|Any CPU
 		{855B2106-EF59-4AA0-ADBE-5C874ADA027E}.Release|x86.Build.0 = Release|Any CPU
+		{26CDFAA6-E8EE-4A77-A478-DA1BCFA62F3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26CDFAA6-E8EE-4A77-A478-DA1BCFA62F3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26CDFAA6-E8EE-4A77-A478-DA1BCFA62F3A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{26CDFAA6-E8EE-4A77-A478-DA1BCFA62F3A}.Debug|x64.Build.0 = Debug|Any CPU
+		{26CDFAA6-E8EE-4A77-A478-DA1BCFA62F3A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{26CDFAA6-E8EE-4A77-A478-DA1BCFA62F3A}.Debug|x86.Build.0 = Debug|Any CPU
+		{26CDFAA6-E8EE-4A77-A478-DA1BCFA62F3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26CDFAA6-E8EE-4A77-A478-DA1BCFA62F3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26CDFAA6-E8EE-4A77-A478-DA1BCFA62F3A}.Release|x64.ActiveCfg = Release|Any CPU
+		{26CDFAA6-E8EE-4A77-A478-DA1BCFA62F3A}.Release|x64.Build.0 = Release|Any CPU
+		{26CDFAA6-E8EE-4A77-A478-DA1BCFA62F3A}.Release|x86.ActiveCfg = Release|Any CPU
+		{26CDFAA6-E8EE-4A77-A478-DA1BCFA62F3A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -65,6 +79,7 @@ Global
 		{4E41A12C-5C57-45FB-BE91-35A0D5E5BA39} = {CA7BA24E-2681-4ECF-93FB-404D9505D25F}
 		{123E7349-67DC-4F35-8A3B-57399053B90F} = {CA7BA24E-2681-4ECF-93FB-404D9505D25F}
 		{855B2106-EF59-4AA0-ADBE-5C874ADA027E} = {CA7BA24E-2681-4ECF-93FB-404D9505D25F}
+		{26CDFAA6-E8EE-4A77-A478-DA1BCFA62F3A} = {CA7BA24E-2681-4ECF-93FB-404D9505D25F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7830D804-EBC6-48A3-9189-BA0B67811CEA}
