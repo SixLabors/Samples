@@ -5,12 +5,13 @@ using System;
 using System.Numerics;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Drawing;
-using SixLabors.ImageSharp.Drawing.Brushes;
+using SixLabors.ImageSharp.Processing.Drawing;
+using SixLabors.ImageSharp.Processing.Drawing.Brushes;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
 using SixLabors.Shapes;
+using SixLabors.ImageSharp.Processing.Text;
 
 namespace AvatarWithRoundedCorner
 {
@@ -35,13 +36,14 @@ namespace AvatarWithRoundedCorner
                 var font = SystemFonts.CreateFont("Arial", 39, FontStyle.Regular);
 
                 string text = "Hello World Hello World Hello World Hello World Hello World";
+                var textGraphicsOptions = new TextGraphicsOptions(true) // draw the text along the path wrapping at the end of the line
+                {
+                    WrapTextWidth = path.Length
+                };
                 img.Mutate(ctx => ctx
                     .Fill(Rgba32.White) // white background image
                     .Draw(Rgba32.Gray, 3, path) // draw the path so we can see what the text is supposed to be following
-                    .DrawText(text, font, Rgba32.Black, path, new TextGraphicsOptions(true) // draw the text along the path wrapping at the end of the line
-                    {
-                        WrapTextWidth = path.Length
-                    }));
+                    .DrawText(textGraphicsOptions, text, font, Rgba32.Black, path));
 
                 img.Save("output/wordart.png");
             }
@@ -79,11 +81,11 @@ namespace AvatarWithRoundedCorner
 
                 var center = new PointF(img.Width / 2, img.Height / 2);
 
-                img.Mutate(i => i.DrawText(text, scaledFont, color, center, new TextGraphicsOptions(true)
-                {
+                var textGraphicsOptions = new TextGraphicsOptions(true) {
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
-                }));
+                };
+                img.Mutate(i => i.DrawText(textGraphicsOptions, text, scaledFont, color, center));
             });
         }
 
@@ -142,13 +144,13 @@ namespace AvatarWithRoundedCorner
                     });
                 }
 
-                var center = new PointF(padding, img.Height / 2); 
-                img.Mutate(i => i.DrawText(text, scaledFont, color, center, new TextGraphicsOptions(true)
-                {
+                var center = new PointF(padding, img.Height / 2);
+                var textGraphicsOptions = new TextGraphicsOptions(true) {
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Center,
                     WrapTextWidth = targetWidth
-                }));
+                };
+                img.Mutate(i => i.DrawText(textGraphicsOptions, text, scaledFont, color, center));
             });
         }
     }

@@ -6,6 +6,8 @@ using System.Numerics;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Drawing;
+using SixLabors.ImageSharp.Processing.Transforms;
 using SixLabors.Primitives;
 using SixLabors.Shapes;
 
@@ -78,17 +80,17 @@ namespace AvatarWithRoundedCorner
         {
             IPathCollection corners = BuildCorners(img.Width, img.Height, cornerRadius);
 
-            // mutating in here as we already have a cloned original
-            img.Mutate(x => x.Fill(Rgba32.Transparent, corners, new GraphicsOptions(true)
-            {
+            var graphicOptions = new GraphicsOptions(true) {
                 BlenderMode = PixelBlenderMode.Src // enforces that any part of this shape that has color is punched out of the background
-            }));
+            };
+            // mutating in here as we already have a cloned original
+            img.Mutate(x => x.Fill(graphicOptions, Rgba32.Transparent, corners));
         }
 
         public static IPathCollection BuildCorners(int imageWidth, int imageHeight, float cornerRadius)
         {
             // first create a square
-            var rect = new RectangularePolygon(-0.5f, -0.5f, cornerRadius, cornerRadius);
+            var rect = new RectangularPolygon(-0.5f, -0.5f, cornerRadius, cornerRadius);
 
             // then cut out of the square a circle so we are left with a corner
             IPath cornerToptLeft = rect.Clip(new EllipsePolygon(cornerRadius - 0.5f, cornerRadius - 0.5f, cornerRadius));
