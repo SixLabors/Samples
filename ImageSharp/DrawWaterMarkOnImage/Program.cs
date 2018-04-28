@@ -5,11 +5,10 @@ using System;
 using System.Numerics;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Drawing;
-using SixLabors.ImageSharp.Drawing.Brushes;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
+using SixLabors.ImageSharp.Processing.Text;
 
 namespace AvatarWithRoundedCorner
 {
@@ -75,12 +74,11 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
                 Font scaledFont = new Font(font, scalingFactor * font.Size);
 
                 var center = new PointF(img.Width / 2, img.Height / 2);
-
-                img.Mutate(i => i.DrawText(text, scaledFont, color, center, new TextGraphicsOptions(true)
-                {
+                var textGraphicOptions = new TextGraphicsOptions(true) {
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
-                }));
+                };
+                img.Mutate(i => i.DrawText(textGraphicOptions, text, scaledFont, color, center));
             });
         }
 
@@ -139,13 +137,13 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
                     });
                 }
 
-                var center = new PointF(padding, img.Height / 2); 
-                img.Mutate(i => i.DrawText(text, scaledFont, color, center, new TextGraphicsOptions(true)
-                {
+                var center = new PointF(padding, img.Height / 2);
+                var textGraphicOptions = new TextGraphicsOptions(true) {
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Center,
                     WrapTextWidth = targetWidth
-                }));
+                };
+                img.Mutate(i => i.DrawText(textGraphicOptions, text, scaledFont, color, center));
             });
         }
     }
