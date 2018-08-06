@@ -2,19 +2,18 @@
 // Licensed under the Apache License, Version 2.0.
 
 using System;
-using System.Numerics;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing.Drawing;
-using SixLabors.ImageSharp.Processing.Drawing.Brushes;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
 using SixLabors.Shapes;
 using SixLabors.ImageSharp.Processing.Text;
 
-namespace AvatarWithRoundedCorner
+namespace DrawingTextAlongAPath
 {
+    // TODO: This example does no longer work with beta5!
     static class Program
     {
         static void Main(string[] args)
@@ -43,6 +42,7 @@ namespace AvatarWithRoundedCorner
                 img.Mutate(ctx => ctx
                     .Fill(Rgba32.White) // white background image
                     .Draw(Rgba32.Gray, 3, path) // draw the path so we can see what the text is supposed to be following
+                    // TODO: The DrawText(...) extension taking a path does not exist any longer!
                     .DrawText(textGraphicsOptions, text, font, Rgba32.Black, path));
 
                 img.Save("output/wordart.png");
