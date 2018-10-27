@@ -4,12 +4,10 @@
 using System;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing.Drawing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
 using SixLabors.Shapes;
-using SixLabors.ImageSharp.Processing.Text;
 
 namespace DrawingTextAlongAPath
 {
@@ -39,11 +37,22 @@ namespace DrawingTextAlongAPath
                 {
                     WrapTextWidth = path.Length
                 };
+
+                // lets generate the text as a set of vectors drawn along the path
+
+                var glyphs = SixLabors.Shapes.TextBuilder.GenerateGlyphs(text, path, new RendererOptions(font, textGraphicsOptions.DpiX, textGraphicsOptions.DpiY)
+                {
+                    HorizontalAlignment = textGraphicsOptions.HorizontalAlignment,
+                    TabWidth = textGraphicsOptions.TabWidth,
+                    VerticalAlignment = textGraphicsOptions.VerticalAlignment,
+                    WrappingWidth = textGraphicsOptions.WrapTextWidth,
+                    ApplyKerning = textGraphicsOptions.ApplyKerning
+                });
+
                 img.Mutate(ctx => ctx
                     .Fill(Rgba32.White) // white background image
                     .Draw(Rgba32.Gray, 3, path) // draw the path so we can see what the text is supposed to be following
-                    // TODO: The DrawText(...) extension taking a path does not exist any longer!
-                    .DrawText(textGraphicsOptions, text, font, Rgba32.Black, path));
+                    .Fill((GraphicsOptions)textGraphicsOptions, Rgba32.Black, glyphs));
 
                 img.Save("output/wordart.png");
             }
@@ -81,7 +90,8 @@ namespace DrawingTextAlongAPath
 
                 var center = new PointF(img.Width / 2, img.Height / 2);
 
-                var textGraphicsOptions = new TextGraphicsOptions(true) {
+                var textGraphicsOptions = new TextGraphicsOptions(true)
+                {
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };
@@ -145,7 +155,8 @@ namespace DrawingTextAlongAPath
                 }
 
                 var center = new PointF(padding, img.Height / 2);
-                var textGraphicsOptions = new TextGraphicsOptions(true) {
+                var textGraphicsOptions = new TextGraphicsOptions(true)
+                {
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Center,
                     WrapTextWidth = targetWidth
