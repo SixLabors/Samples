@@ -2,13 +2,13 @@
 // Licensed under the Apache License, Version 2.0.
 
 using System;
+using System.IO;
 using System.Numerics;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
-using SixLabors.ImageSharp.Processing.Text;
 
 namespace AvatarWithRoundedCorner
 {
@@ -22,21 +22,13 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
             System.IO.Directory.CreateDirectory("output");
             using (var img = Image.Load("fb.jpg"))
             {
-                // For production application we would recomend you create a FontCollection
-                // singleton and manually install the ttf fonts yourself as using SystemFonts
-                // can be expensive and you risk font existing or not existing on a deployment
-                // by deployment basis.
-                Font font = SystemFonts.CreateFont("Arial", 10); // for scaling water mark size is largly ignored.
-
-                using (var img2 = img.Clone(ctx => ctx.ApplyScalingWaterMark(font, "A short piece of text", Rgba32.HotPink, 5, false)))
+                SixLabors.Fonts.FontCollection fontCollection = new FontCollection();
+                SixLabors.Fonts.Font carlitoFont = fontCollection.Install(Directory.GetCurrentDirectory() + "/font/Carlito-Regular.ttf")
+                .CreateFont(14, FontStyle.Regular);
+               
+                using (var img2 = img.Clone(ctx => ctx.ApplyScalingWaterMark(carlitoFont, longText, Rgba32.HotPink, 5, true)))
                 {
-                    img2.Save("output/simple.png");
-                }
-
-
-                using (var img2 = img.Clone(ctx => ctx.ApplyScalingWaterMark(font, longText, Rgba32.HotPink, 5, true)))
-                {
-                    img2.Save("output/wrapped.png");
+                    img2.Save("output/watermarked.png");
                 }
 
                 // the original `img` object has not been altered at all.

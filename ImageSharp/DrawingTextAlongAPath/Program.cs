@@ -2,16 +2,14 @@
 // Licensed under the Apache License, Version 2.0.
 
 using System;
+using System.IO;
 using System.Numerics;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing.Drawing;
-using SixLabors.ImageSharp.Processing.Drawing.Brushes;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
 using SixLabors.Shapes;
-using SixLabors.ImageSharp.Processing.Text;
 
 namespace AvatarWithRoundedCorner
 {
@@ -29,23 +27,23 @@ namespace AvatarWithRoundedCorner
 
                 IPath path = pathBuilder.Build();
 
-                // For production application we would recomend you create a FontCollection
-                // singleton and manually install the ttf fonts yourself as using SystemFonts
-                // can be expensive and you risk font existing or not existing on a deployment
-                // by deployment basis.
-                var font = SystemFonts.CreateFont("Arial", 39, FontStyle.Regular);
-
+                SixLabors.Fonts.FontCollection fontCollection = new FontCollection();
+                SixLabors.Fonts.Font carlitoFont = fontCollection.Install(Directory.GetCurrentDirectory() + "/font/Carlito-Regular.ttf")
+                .CreateFont(14, FontStyle.Regular);
+             
                 string text = "Hello World Hello World Hello World Hello World Hello World";
                 var textGraphicsOptions = new TextGraphicsOptions(true) // draw the text along the path wrapping at the end of the line
                 {
                     WrapTextWidth = path.Length
                 };
+
+                var point = new PointF(100, 100);
                 img.Mutate(ctx => ctx
                     .Fill(Rgba32.White) // white background image
                     .Draw(Rgba32.Gray, 3, path) // draw the path so we can see what the text is supposed to be following
-                    .DrawText(textGraphicsOptions, text, font, Rgba32.Black, path));
+                    .DrawText(textGraphicsOptions, text, carlitoFont, Rgba32.Black, point));
 
-                img.Save("output/wordart.png");
+                img.Save("output/path.png");
             }
         }
 
