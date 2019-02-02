@@ -2,15 +2,13 @@
 // Licensed under the Apache License, Version 2.0.
 
 using System;
-using System.Numerics;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
-using SixLabors.ImageSharp.Processing.Text;
 
-namespace AvatarWithRoundedCorner
+namespace DrawWaterMarkOnImage
 {
     static class Program
     {
@@ -70,7 +68,7 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
                 //find out how much we need to scale the text to fill the space (up or down)
                 float scalingFactor = Math.Min(img.Width / size.Width, img.Height / size.Height);
 
-                //create a new font 
+                //create a new font
                 Font scaledFont = new Font(font, scalingFactor * font.Size);
 
                 var center = new PointF(img.Width / 2, img.Height / 2);
@@ -92,7 +90,7 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
 
                 float targetMinHeight = img.Height - (padding * 3); // must be with in a margin width of the target height
 
-                // now we are working i 2 dimensions at once and can't just scale because it will cause the text to 
+                // now we are working i 2 dimensions at once and can't just scale because it will cause the text to
                 // reflow we need to just try multiple times
 
                 var scaledFont = font;

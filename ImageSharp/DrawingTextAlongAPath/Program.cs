@@ -2,19 +2,16 @@
 // Licensed under the Apache License, Version 2.0.
 
 using System;
-using System.Numerics;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing.Drawing;
-using SixLabors.ImageSharp.Processing.Drawing.Brushes;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
 using SixLabors.Shapes;
-using SixLabors.ImageSharp.Processing.Text;
 
-namespace AvatarWithRoundedCorner
+namespace DrawingTextAlongAPath
 {
+    // TODO: This example does no longer work with beta5!
     static class Program
     {
         static void Main(string[] args)
@@ -40,10 +37,22 @@ namespace AvatarWithRoundedCorner
                 {
                     WrapTextWidth = path.Length
                 };
+
+                // lets generate the text as a set of vectors drawn along the path
+
+                var glyphs = SixLabors.Shapes.TextBuilder.GenerateGlyphs(text, path, new RendererOptions(font, textGraphicsOptions.DpiX, textGraphicsOptions.DpiY)
+                {
+                    HorizontalAlignment = textGraphicsOptions.HorizontalAlignment,
+                    TabWidth = textGraphicsOptions.TabWidth,
+                    VerticalAlignment = textGraphicsOptions.VerticalAlignment,
+                    WrappingWidth = textGraphicsOptions.WrapTextWidth,
+                    ApplyKerning = textGraphicsOptions.ApplyKerning
+                });
+
                 img.Mutate(ctx => ctx
                     .Fill(Rgba32.White) // white background image
                     .Draw(Rgba32.Gray, 3, path) // draw the path so we can see what the text is supposed to be following
-                    .DrawText(textGraphicsOptions, text, font, Rgba32.Black, path));
+                    .Fill((GraphicsOptions)textGraphicsOptions, Rgba32.Black, glyphs));
 
                 img.Save("output/wordart.png");
             }
@@ -76,12 +85,13 @@ namespace AvatarWithRoundedCorner
                 //find out how much we need to scale the text to fill the space (up or down)
                 float scalingFactor = Math.Min(img.Width / size.Width, img.Height / size.Height);
 
-                //create a new font 
+                //create a new font
                 Font scaledFont = new Font(font, scalingFactor * font.Size);
 
                 var center = new PointF(img.Width / 2, img.Height / 2);
 
-                var textGraphicsOptions = new TextGraphicsOptions(true) {
+                var textGraphicsOptions = new TextGraphicsOptions(true)
+                {
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };
@@ -99,7 +109,7 @@ namespace AvatarWithRoundedCorner
 
                 float targetMinHeight = img.Height - (padding * 3); // must be with in a margin width of the target height
 
-                // now we are working i 2 dimensions at once and can't just scale because it will cause the text to 
+                // now we are working i 2 dimensions at once and can't just scale because it will cause the text to
                 // reflow we need to just try multiple times
 
                 var scaledFont = font;
@@ -145,7 +155,8 @@ namespace AvatarWithRoundedCorner
                 }
 
                 var center = new PointF(padding, img.Height / 2);
-                var textGraphicsOptions = new TextGraphicsOptions(true) {
+                var textGraphicsOptions = new TextGraphicsOptions(true)
+                {
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Center,
                     WrapTextWidth = targetWidth
