@@ -1,7 +1,7 @@
 # ImageSharp Samples
 Various ImageSharp related samples.
 
-1. Resize and add simple effect [c#](./c-sharp/ResizeIamge/) [vb](./vb/ResizeIamge/)
+1. Resize and add simple effect [c#](./c-sharp/ResizeIamge/) [vb](./vb/ResizeImage/)
 
    Simple sample of sizing a jpeg and making it greyscale before saving it out as a png.
 
