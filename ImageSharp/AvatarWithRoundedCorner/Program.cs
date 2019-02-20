@@ -78,10 +78,11 @@ namespace AvatarWithRoundedCorner
             IPathCollection corners = BuildCorners(img.Width, img.Height, cornerRadius);
 
             var graphicOptions = new GraphicsOptions(true) {
-                BlenderMode = PixelBlenderMode.Src // enforces that any part of this shape that has color is punched out of the background
+                AlphaCompositionMode = PixelAlphaCompositionMode.DestOut // enforces that any part of this shape that has color is punched out of the background
             };
             // mutating in here as we already have a cloned original
-            img.Mutate(x => x.Fill(graphicOptions, Rgba32.Transparent, corners));
+            // use any color (not Transparent), so the corners will be clipped
+            img.Mutate(x => x.Fill(graphicOptions, Rgba32.LimeGreen, corners));
         }
 
         public static IPathCollection BuildCorners(int imageWidth, int imageHeight, float cornerRadius)
@@ -90,21 +91,20 @@ namespace AvatarWithRoundedCorner
             var rect = new RectangularPolygon(-0.5f, -0.5f, cornerRadius, cornerRadius);
 
             // then cut out of the square a circle so we are left with a corner
-            IPath cornerToptLeft = rect.Clip(new EllipsePolygon(cornerRadius - 0.5f, cornerRadius - 0.5f, cornerRadius));
+            IPath cornerTopLeft = rect.Clip(new EllipsePolygon(cornerRadius - 0.5f, cornerRadius - 0.5f, cornerRadius));
 
             // corner is now a corner shape positions top left
             //lets make 3 more positioned correctly, we can do that by translating the orgional artound the center of the image
-            var center = new Vector2(imageWidth / 2F, imageHeight / 2F);
 
-            float rightPos = imageWidth - cornerToptLeft.Bounds.Width + 1;
-            float bottomPos = imageHeight - cornerToptLeft.Bounds.Height + 1;
+            float rightPos = imageWidth - cornerTopLeft.Bounds.Width + 1;
+            float bottomPos = imageHeight - cornerTopLeft.Bounds.Height + 1;
 
-            // move it across the widthof the image - the width of the shape
-            IPath cornerTopRight = cornerToptLeft.RotateDegree(90).Translate(rightPos, 0);
-            IPath cornerBottomLeft = cornerToptLeft.RotateDegree(-90).Translate(0, bottomPos);
-            IPath cornerBottomRight = cornerToptLeft.RotateDegree(180).Translate(rightPos, bottomPos);
+            // move it across the width of the image - the width of the shape
+            IPath cornerTopRight = cornerTopLeft.RotateDegree(90).Translate(rightPos, 0);
+            IPath cornerBottomLeft = cornerTopLeft.RotateDegree(-90).Translate(0, bottomPos);
+            IPath cornerBottomRight = cornerTopLeft.RotateDegree(180).Translate(rightPos, bottomPos);
 
-            return new PathCollection(cornerToptLeft, cornerBottomLeft, cornerTopRight, cornerBottomRight);
+            return new PathCollection(cornerTopLeft, cornerBottomLeft, cornerTopRight, cornerBottomRight);
         }
     }
 }
