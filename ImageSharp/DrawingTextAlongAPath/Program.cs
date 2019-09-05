@@ -17,7 +17,7 @@ namespace DrawingTextAlongAPath
         static void Main(string[] args)
         {
             System.IO.Directory.CreateDirectory("output");
-            using (Image<Rgba32> img = new Image<Rgba32>(1500, 500))
+            using (Image img = new Image<Rgba32>(1500, 500))
             {
                 PathBuilder pathBuilder = new PathBuilder();
                 pathBuilder.SetOrigin(new PointF(500, 0));
@@ -40,7 +40,8 @@ namespace DrawingTextAlongAPath
 
                 // lets generate the text as a set of vectors drawn along the path
 
-                var glyphs = SixLabors.Shapes.TextBuilder.GenerateGlyphs(text, path, new RendererOptions(font, textGraphicsOptions.DpiX, textGraphicsOptions.DpiY)
+
+                var glyphs = TextBuilder.GenerateGlyphs(text, path, new RendererOptions(font, textGraphicsOptions.DpiX, textGraphicsOptions.DpiY)
                 {
                     HorizontalAlignment = textGraphicsOptions.HorizontalAlignment,
                     TabWidth = textGraphicsOptions.TabWidth,
@@ -50,16 +51,20 @@ namespace DrawingTextAlongAPath
                 });
 
                 img.Mutate(ctx => ctx
-                    .Fill(Rgba32.White) // white background image
-                    .Draw(Rgba32.Gray, 3, path) // draw the path so we can see what the text is supposed to be following
-                    .Fill((GraphicsOptions)textGraphicsOptions, Rgba32.Black, glyphs));
+                    .Fill(Color.White) // white background image
+                    .Draw(Color.Gray, 3, path) // draw the path so we can see what the text is supposed to be following
+                    .Fill((GraphicsOptions)textGraphicsOptions, Color.Black, glyphs));
 
                 img.Save("output/wordart.png");
             }
         }
 
-        public static IImageProcessingContext<TPixel> ApplyScalingWaterMark<TPixel>(this IImageProcessingContext<TPixel> processingContext, Font font, string text, TPixel color, float padding, bool wordwrap)
-           where TPixel : struct, IPixel<TPixel>
+        public static IImageProcessingContext ApplyScalingWaterMark(this IImageProcessingContext processingContext,
+            Font font,
+            string text,
+            Color color,
+            float padding,
+            bool wordwrap)
         {
             if (wordwrap)
             {
@@ -71,98 +76,103 @@ namespace DrawingTextAlongAPath
             }
         }
 
-        public static IImageProcessingContext<TPixel> ApplyScalingWaterMarkSimple<TPixel>(this IImageProcessingContext<TPixel> processingContext, Font font, string text, TPixel color, float padding)
-            where TPixel : struct, IPixel<TPixel>
+        private static IImageProcessingContext ApplyScalingWaterMarkSimple(
+            this IImageProcessingContext processingContext,
+            Font font,
+            string text,
+            Color color,
+            float padding)
         {
-            return processingContext.Apply(img =>
+            Size imgSize = processingContext.GetCurrentSize();
+
+            float targetWidth = imgSize.Width - (padding * 2);
+            float targetHeight = imgSize.Height - (padding * 2);
+
+            // measure the text size
+            SizeF size = TextMeasurer.Measure(text, new RendererOptions(font));
+
+            //find out how much we need to scale the text to fill the space (up or down)
+            float scalingFactor = Math.Min(imgSize.Width / size.Width, imgSize.Height / size.Height);
+
+            //create a new font
+            Font scaledFont = new Font(font, scalingFactor * font.Size);
+
+            var center = new PointF(imgSize.Width / 2, imgSize.Height / 2);
+
+            var textGraphicsOptions = new TextGraphicsOptions(true)
             {
-                float targetWidth = img.Width - (padding * 2);
-                float targetHeight = img.Height - (padding * 2);
-
-                // measure the text size
-                SizeF size = TextMeasurer.Measure(text, new RendererOptions(font));
-
-                //find out how much we need to scale the text to fill the space (up or down)
-                float scalingFactor = Math.Min(img.Width / size.Width, img.Height / size.Height);
-
-                //create a new font
-                Font scaledFont = new Font(font, scalingFactor * font.Size);
-
-                var center = new PointF(img.Width / 2, img.Height / 2);
-
-                var textGraphicsOptions = new TextGraphicsOptions(true)
-                {
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-                img.Mutate(i => i.DrawText(textGraphicsOptions, text, scaledFont, color, center));
-            });
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            return processingContext.DrawText(textGraphicsOptions, text, scaledFont, color, center);
         }
 
-        public static IImageProcessingContext<TPixel> ApplyScalingWaterMarkWordWrap<TPixel>(this IImageProcessingContext<TPixel> processingContext, Font font, string text, TPixel color, float padding)
-            where TPixel : struct, IPixel<TPixel>
+        private static IImageProcessingContext ApplyScalingWaterMarkWordWrap(
+            this IImageProcessingContext processingContext,
+            Font font,
+            string text,
+            Color color,
+            float padding)
         {
-            return processingContext.Apply(img =>
+            Size imgSize = processingContext.GetCurrentSize();
+            float targetWidth = imgSize.Width - (padding * 2);
+            float targetHeight = imgSize.Height - (padding * 2);
+
+            float targetMinHeight = imgSize.Height - (padding * 3); // must be with in a margin width of the target height
+
+            // now we are working i 2 dimensions at once and can't just scale because it will cause the text to
+            // reflow we need to just try multiple times
+
+            var scaledFont = font;
+            SizeF s = new SizeF(float.MaxValue, float.MaxValue);
+
+            float scaleFactor = (scaledFont.Size / 2);// everytime we change direction we half this size
+            int trapCount = (int)scaledFont.Size * 2;
+            if (trapCount < 10)
             {
-                float targetWidth = img.Width - (padding * 2);
-                float targetHeight = img.Height - (padding * 2);
+                trapCount = 10;
+            }
 
-                float targetMinHeight = img.Height - (padding * 3); // must be with in a margin width of the target height
+            bool isTooSmall = false;
 
-                // now we are working i 2 dimensions at once and can't just scale because it will cause the text to
-                // reflow we need to just try multiple times
-
-                var scaledFont = font;
-                SizeF s = new SizeF(float.MaxValue, float.MaxValue);
-
-                float scaleFactor = (scaledFont.Size / 2);// everytime we change direction we half this size
-                int trapCount = (int)scaledFont.Size * 2;
-                if (trapCount < 10)
+            while ((s.Height > targetHeight || s.Height < targetMinHeight) && trapCount > 0)
+            {
+                if (s.Height > targetHeight)
                 {
-                    trapCount = 10;
-                }
-
-                bool isTooSmall = false;
-
-                while ((s.Height > targetHeight || s.Height < targetMinHeight) && trapCount > 0)
-                {
-                    if (s.Height > targetHeight)
+                    if (isTooSmall)
                     {
-                        if (isTooSmall)
-                        {
-                            scaleFactor = scaleFactor / 2;
-                        }
-
-                        scaledFont = new Font(scaledFont, scaledFont.Size - scaleFactor);
-                        isTooSmall = false;
+                        scaleFactor = scaleFactor / 2;
                     }
 
-                    if (s.Height < targetMinHeight)
-                    {
-                        if (!isTooSmall)
-                        {
-                            scaleFactor = scaleFactor / 2;
-                        }
-                        scaledFont = new Font(scaledFont, scaledFont.Size + scaleFactor);
-                        isTooSmall = true;
-                    }
-                    trapCount--;
-
-                    s = TextMeasurer.Measure(text, new RendererOptions(scaledFont)
-                    {
-                        WrappingWidth = targetWidth
-                    });
+                    scaledFont = new Font(scaledFont, scaledFont.Size - scaleFactor);
+                    isTooSmall = false;
                 }
 
-                var center = new PointF(padding, img.Height / 2);
-                var textGraphicsOptions = new TextGraphicsOptions(true)
+                if (s.Height < targetMinHeight)
                 {
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    WrapTextWidth = targetWidth
-                };
-                img.Mutate(i => i.DrawText(textGraphicsOptions, text, scaledFont, color, center));
-            });
+                    if (!isTooSmall)
+                    {
+                        scaleFactor = scaleFactor / 2;
+                    }
+                    scaledFont = new Font(scaledFont, scaledFont.Size + scaleFactor);
+                    isTooSmall = true;
+                }
+                trapCount--;
+
+                s = TextMeasurer.Measure(text, new RendererOptions(scaledFont)
+                {
+                    WrappingWidth = targetWidth
+                });
+            }
+
+            var center = new PointF(padding, imgSize.Height / 2);
+            var textGraphicsOptions = new TextGraphicsOptions(true)
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                WrapTextWidth = targetWidth
+            };
+            return processingContext.DrawText(textGraphicsOptions, text, scaledFont, color, center);
         }
     }
 }

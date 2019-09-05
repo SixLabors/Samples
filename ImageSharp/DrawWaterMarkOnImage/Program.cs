@@ -20,19 +20,19 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
             System.IO.Directory.CreateDirectory("output");
             using (var img = Image.Load("fb.jpg"))
             {
-                // For production application we would recomend you create a FontCollection
+                // For production application we would recommend you create a FontCollection
                 // singleton and manually install the ttf fonts yourself as using SystemFonts
                 // can be expensive and you risk font existing or not existing on a deployment
                 // by deployment basis.
-                Font font = SystemFonts.CreateFont("Arial", 10); // for scaling water mark size is largly ignored.
+                Font font = SystemFonts.CreateFont("Arial", 10); // for scaling water mark size is largely ignored.
 
-                using (var img2 = img.Clone(ctx => ctx.ApplyScalingWaterMark(font, "A short piece of text", Rgba32.HotPink, 5, false)))
+                using (var img2 = img.Clone(ctx => ctx.ApplyScalingWaterMark(font, "A short piece of text", Color.HotPink, 5, false)))
                 {
                     img2.Save("output/simple.png");
                 }
 
 
-                using (var img2 = img.Clone(ctx => ctx.ApplyScalingWaterMark(font, LongText, Rgba32.HotPink, 5, true)))
+                using (var img2 = img.Clone(ctx => ctx.ApplyScalingWaterMark(font, LongText, Color.HotPink, 5, true)))
                 {
                     img2.Save("output/wrapped.png");
                 }
@@ -41,8 +41,12 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
             }
         }
 
-        public static IImageProcessingContext<TPixel> ApplyScalingWaterMark<TPixel>(this IImageProcessingContext<TPixel> processingContext, Font font, string text, TPixel color, float padding, bool wordwrap)
-           where TPixel : struct, IPixel<TPixel>
+        private static IImageProcessingContext ApplyScalingWaterMark(this IImageProcessingContext processingContext,
+            Font font,
+            string text,
+            Color color,
+            float padding,
+            bool wordwrap)
         {
             if (wordwrap)
             {
@@ -54,95 +58,98 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
             }
         }
 
-        public static IImageProcessingContext<TPixel> ApplyScalingWaterMarkSimple<TPixel>(this IImageProcessingContext<TPixel> processingContext, Font font, string text, TPixel color, float padding)
-            where TPixel : struct, IPixel<TPixel>
+        private static IImageProcessingContext ApplyScalingWaterMarkSimple(this IImageProcessingContext processingContext,
+            Font font,
+            string text,
+            Color color, 
+            float padding)
         {
-            return processingContext.Apply(img =>
-            {
-                float targetWidth = img.Width - (padding * 2);
-                float targetHeight = img.Height - (padding * 2);
+            Size imgSize = processingContext.GetCurrentSize();
+            
+            float targetWidth = imgSize.Width - (padding * 2);
+            float targetHeight = imgSize.Height - (padding * 2);
 
-                // measure the text size
-                SizeF size = TextMeasurer.Measure(text, new RendererOptions(font));
+            // measure the text size
+            SizeF size = TextMeasurer.Measure(text, new RendererOptions(font));
 
-                //find out how much we need to scale the text to fill the space (up or down)
-                float scalingFactor = Math.Min(img.Width / size.Width, img.Height / size.Height);
+            //find out how much we need to scale the text to fill the space (up or down)
+            float scalingFactor = Math.Min(imgSize.Width / size.Width, imgSize.Height / size.Height);
 
-                //create a new font
-                Font scaledFont = new Font(font, scalingFactor * font.Size);
+            //create a new font
+            Font scaledFont = new Font(font, scalingFactor * font.Size);
 
-                var center = new PointF(img.Width / 2, img.Height / 2);
-                var textGraphicOptions = new TextGraphicsOptions(true) {
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-                img.Mutate(i => i.DrawText(textGraphicOptions, text, scaledFont, color, center));
-            });
+            var center = new PointF(imgSize.Width / 2, imgSize.Height / 2);
+            var textGraphicOptions = new TextGraphicsOptions(true) {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            return processingContext.DrawText(textGraphicOptions, text, scaledFont, color, center);
         }
 
-        public static IImageProcessingContext<TPixel> ApplyScalingWaterMarkWordWrap<TPixel>(this IImageProcessingContext<TPixel> processingContext, Font font, string text, TPixel color, float padding)
-            where TPixel : struct, IPixel<TPixel>
+        private static IImageProcessingContext ApplyScalingWaterMarkWordWrap(this IImageProcessingContext processingContext,
+            Font font,
+            string text,
+            Color color,
+            float padding)
         {
-            return processingContext.Apply(img =>
+            Size imgSize = processingContext.GetCurrentSize();
+            float targetWidth = imgSize.Width - (padding * 2);
+            float targetHeight = imgSize.Height - (padding * 2);
+
+            float targetMinHeight = imgSize.Height - (padding * 3); // must be with in a margin width of the target height
+
+            // now we are working i 2 dimensions at once and can't just scale because it will cause the text to
+            // reflow we need to just try multiple times
+
+            var scaledFont = font;
+            SizeF s = new SizeF(float.MaxValue, float.MaxValue);
+
+            float scaleFactor = (scaledFont.Size / 2); // every time we change direction we half this size
+            int trapCount = (int)scaledFont.Size * 2;
+            if (trapCount < 10)
             {
-                float targetWidth = img.Width - (padding * 2);
-                float targetHeight = img.Height - (padding * 2);
+                trapCount = 10;
+            }
 
-                float targetMinHeight = img.Height - (padding * 3); // must be with in a margin width of the target height
+            bool isTooSmall = false;
 
-                // now we are working i 2 dimensions at once and can't just scale because it will cause the text to
-                // reflow we need to just try multiple times
-
-                var scaledFont = font;
-                SizeF s = new SizeF(float.MaxValue, float.MaxValue);
-
-                float scaleFactor = (scaledFont.Size / 2);// everytime we change direction we half this size
-                int trapCount = (int)scaledFont.Size * 2;
-                if (trapCount < 10)
+            while ((s.Height > targetHeight || s.Height < targetMinHeight) && trapCount > 0)
+            {
+                if (s.Height > targetHeight)
                 {
-                    trapCount = 10;
-                }
-
-                bool isTooSmall = false;
-
-                while ((s.Height > targetHeight || s.Height < targetMinHeight) && trapCount > 0)
-                {
-                    if (s.Height > targetHeight)
+                    if (isTooSmall)
                     {
-                        if (isTooSmall)
-                        {
-                            scaleFactor = scaleFactor / 2;
-                        }
-
-                        scaledFont = new Font(scaledFont, scaledFont.Size - scaleFactor);
-                        isTooSmall = false;
+                        scaleFactor = scaleFactor / 2;
                     }
 
-                    if (s.Height < targetMinHeight)
-                    {
-                        if (!isTooSmall)
-                        {
-                            scaleFactor = scaleFactor / 2;
-                        }
-                        scaledFont = new Font(scaledFont, scaledFont.Size + scaleFactor);
-                        isTooSmall = true;
-                    }
-                    trapCount--;
-
-                    s = TextMeasurer.Measure(text, new RendererOptions(scaledFont)
-                    {
-                        WrappingWidth = targetWidth
-                    });
+                    scaledFont = new Font(scaledFont, scaledFont.Size - scaleFactor);
+                    isTooSmall = false;
                 }
 
-                var center = new PointF(padding, img.Height / 2);
-                var textGraphicOptions = new TextGraphicsOptions(true) {
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    WrapTextWidth = targetWidth
-                };
-                img.Mutate(i => i.DrawText(textGraphicOptions, text, scaledFont, color, center));
-            });
+                if (s.Height < targetMinHeight)
+                {
+                    if (!isTooSmall)
+                    {
+                        scaleFactor = scaleFactor / 2;
+                    }
+                    scaledFont = new Font(scaledFont, scaledFont.Size + scaleFactor);
+                    isTooSmall = true;
+                }
+                trapCount--;
+
+                s = TextMeasurer.Measure(text, new RendererOptions(scaledFont)
+                {
+                    WrappingWidth = targetWidth
+                });
+            }
+
+            var center = new PointF(padding, imgSize.Height / 2);
+            var textGraphicOptions = new TextGraphicsOptions(true) {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                WrapTextWidth = targetWidth
+            };
+            return processingContext.DrawText(textGraphicOptions, text, scaledFont, color, center);
         }
     }
 }

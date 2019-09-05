@@ -16,7 +16,7 @@ namespace ResizeImage
         {
             System.IO.Directory.CreateDirectory("output");
 
-            using (Image<Rgba32> image = Image.Load("fb.jpg"))
+            using (Image image = Image.Load("fb.jpg"))
             {
                 image.Mutate(x => x
                      .Resize(image.Width / 2, image.Height / 2)
