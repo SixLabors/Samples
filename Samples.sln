@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ImageSharp", "ImageSharp", "{CA7BA24E-2681-4ECF-93FB-404D9505D25F}"
+	ProjectSection(SolutionItems) = preProject
+		ImageSharp\README.md = ImageSharp\README.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvatarWithRoundedCorner", "ImageSharp\AvatarWithRoundedCorner\AvatarWithRoundedCorner.csproj", "{88E0D474-46DC-467D-9A26-344C0A07A57F}"
 EndProject
@@ -16,6 +19,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResizeImage", "ImageSharp\ResizeImage\ResizeImage.csproj", "{173903CD-07DB-4E23-91B9-4107F319A7CA}"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "ResizeImageVB", "ImageSharp\ResizeImageVB\ResizeImageVB.vbproj", "{5BD7AD82-F99B-44D0-8B14-46B00CFF37FF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApplyEffectInsideShape", "ImageSharp\ApplyEffectInsideShape\ApplyEffectInsideShape.csproj", "{7612FC88-232B-408C-9F5B-3B6C9726BCD8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomImageProcessor", "ImageSharp\CustomImageProcessor\CustomImageProcessor.csproj", "{20B1F090-0C24-4410-8EB1-4B469FD5C404}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +54,14 @@ Global
 		{5BD7AD82-F99B-44D0-8B14-46B00CFF37FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BD7AD82-F99B-44D0-8B14-46B00CFF37FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BD7AD82-F99B-44D0-8B14-46B00CFF37FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7612FC88-232B-408C-9F5B-3B6C9726BCD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7612FC88-232B-408C-9F5B-3B6C9726BCD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7612FC88-232B-408C-9F5B-3B6C9726BCD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7612FC88-232B-408C-9F5B-3B6C9726BCD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20B1F090-0C24-4410-8EB1-4B469FD5C404}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20B1F090-0C24-4410-8EB1-4B469FD5C404}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20B1F090-0C24-4410-8EB1-4B469FD5C404}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20B1F090-0C24-4410-8EB1-4B469FD5C404}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,6 +73,8 @@ Global
 		{DAFA5B71-1519-42CC-ACA4-77B01288EB1F} = {CA7BA24E-2681-4ECF-93FB-404D9505D25F}
 		{173903CD-07DB-4E23-91B9-4107F319A7CA} = {CA7BA24E-2681-4ECF-93FB-404D9505D25F}
 		{5BD7AD82-F99B-44D0-8B14-46B00CFF37FF} = {CA7BA24E-2681-4ECF-93FB-404D9505D25F}
+		{7612FC88-232B-408C-9F5B-3B6C9726BCD8} = {CA7BA24E-2681-4ECF-93FB-404D9505D25F}
+		{20B1F090-0C24-4410-8EB1-4B469FD5C404} = {CA7BA24E-2681-4ECF-93FB-404D9505D25F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7830D804-EBC6-48A3-9189-BA0B67811CEA}
