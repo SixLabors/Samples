@@ -25,7 +25,7 @@ namespace ResizeImage
                 var star = new Star(new PointF(image.Width / 2, image.Height / 2), 5, outerRadii / 2, outerRadii);
 
                 image.Mutate(x => x
-                     .ProcessInsideShape(star, p => p.Pixelate(15)));
+                     .ProcessInsideShape(star, p => p.Pixelate(15)));// call your custom extension method
 
                 image.Save("output/fb.png"); // Automatic encoder selected based on extension.
             }
@@ -90,7 +90,11 @@ namespace ResizeImage
 
             public void Execute()
             {
-                // no this implementation of our sample, we want to clone out our source image so we can apply 
+                // performa any processing logic you wan here, in this case we are going to 
+                // clone the source image then apply the changes requested before cropping 
+                // down and using an image brush to draw that portion the the original image
+
+                // so clone out our source image so we can apply 
                 // various effects to it without mutating the origional yet.
                 using (var clone = source.Clone(recursiveImageProcessor.InnerProcessingOperations))
                 {
@@ -100,10 +104,11 @@ namespace ResizeImage
                     // use an image brush to apply cloned image as the source for filling the shape
                     var brush = new ImageBrush(clone);
                     
-                    // fill the shape using the image brush
+                    // grab hold of an inbox image processor that can fill paths with a brush to allow it to do the hard pixel pushing for us
                     var processor = new FillPathProcessor(recursiveImageProcessor.Options, brush, recursiveImageProcessor.Path);
                     using (var p = processor.CreatePixelSpecificProcessor<TPixel>(configuration, source, sourceRectangle))
                     {
+                        // fill the shape using the image brush
                         p.Execute();
                     }
                 }
