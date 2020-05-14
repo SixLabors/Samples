@@ -4,10 +4,10 @@
 using System;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
-using SixLabors.Shapes;
 
 namespace DrawingTextAlongAPath
 {
@@ -33,27 +33,29 @@ namespace DrawingTextAlongAPath
                 var font = SystemFonts.CreateFont("Arial", 39, FontStyle.Regular);
 
                 string text = "Hello World Hello World Hello World Hello World Hello World";
-                var textGraphicsOptions = new TextGraphicsOptions(true) // draw the text along the path wrapping at the end of the line
+                var textGraphicsOptions = new TextGraphicsOptions() // draw the text along the path wrapping at the end of the line
                 {
-                    WrapTextWidth = path.Length
+                    TextOptions = {
+                        WrapTextWidth = path.Length
+                    }
                 };
 
                 // lets generate the text as a set of vectors drawn along the path
 
 
-                var glyphs = TextBuilder.GenerateGlyphs(text, path, new RendererOptions(font, textGraphicsOptions.DpiX, textGraphicsOptions.DpiY)
+                var glyphs = TextBuilder.GenerateGlyphs(text, path, new RendererOptions(font, textGraphicsOptions.TextOptions.DpiX, textGraphicsOptions.TextOptions.DpiY)
                 {
-                    HorizontalAlignment = textGraphicsOptions.HorizontalAlignment,
-                    TabWidth = textGraphicsOptions.TabWidth,
-                    VerticalAlignment = textGraphicsOptions.VerticalAlignment,
-                    WrappingWidth = textGraphicsOptions.WrapTextWidth,
-                    ApplyKerning = textGraphicsOptions.ApplyKerning
+                    HorizontalAlignment = textGraphicsOptions.TextOptions.HorizontalAlignment,
+                    TabWidth = textGraphicsOptions.TextOptions.TabWidth,
+                    VerticalAlignment = textGraphicsOptions.TextOptions.VerticalAlignment,
+                    WrappingWidth = textGraphicsOptions.TextOptions.WrapTextWidth,
+                    ApplyKerning = textGraphicsOptions.TextOptions.ApplyKerning
                 });
 
                 img.Mutate(ctx => ctx
                     .Fill(Color.White) // white background image
                     .Draw(Color.Gray, 3, path) // draw the path so we can see what the text is supposed to be following
-                    .Fill((GraphicsOptions)textGraphicsOptions, Color.Black, glyphs));
+                    .Fill(Color.Black, glyphs));
 
                 img.Save("output/wordart.png");
             }
@@ -89,7 +91,7 @@ namespace DrawingTextAlongAPath
             float targetHeight = imgSize.Height - (padding * 2);
 
             // measure the text size
-            SizeF size = TextMeasurer.Measure(text, new RendererOptions(font));
+            FontRectangle size = TextMeasurer.Measure(text, new RendererOptions(font));
 
             //find out how much we need to scale the text to fill the space (up or down)
             float scalingFactor = Math.Min(imgSize.Width / size.Width, imgSize.Height / size.Height);
@@ -99,10 +101,12 @@ namespace DrawingTextAlongAPath
 
             var center = new PointF(imgSize.Width / 2, imgSize.Height / 2);
 
-            var textGraphicsOptions = new TextGraphicsOptions(true)
+            var textGraphicsOptions = new TextGraphicsOptions()
             {
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
+                TextOptions = {
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                }
             };
             return processingContext.DrawText(textGraphicsOptions, text, scaledFont, color, center);
         }
@@ -124,7 +128,7 @@ namespace DrawingTextAlongAPath
             // reflow we need to just try multiple times
 
             var scaledFont = font;
-            SizeF s = new SizeF(float.MaxValue, float.MaxValue);
+            FontRectangle s = new FontRectangle(0, 0, float.MaxValue, float.MaxValue);
 
             float scaleFactor = (scaledFont.Size / 2);// everytime we change direction we half this size
             int trapCount = (int)scaledFont.Size * 2;
@@ -166,11 +170,13 @@ namespace DrawingTextAlongAPath
             }
 
             var center = new PointF(padding, imgSize.Height / 2);
-            var textGraphicsOptions = new TextGraphicsOptions(true)
+            var textGraphicsOptions = new TextGraphicsOptions()
             {
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Center,
-                WrapTextWidth = targetWidth
+                TextOptions = {
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    WrapTextWidth = targetWidth
+                }
             };
             return processingContext.DrawText(textGraphicsOptions, text, scaledFont, color, center);
         }

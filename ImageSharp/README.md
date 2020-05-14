@@ -16,7 +16,15 @@ Various ImageSharp related samples.
 4. Change default encoder options [c#](./ChangeDefaultEncoderOptions/)
 
    Provides an example on how you go about switching out the registered encoder for a file format and changing its default options in the process.
-
+   
 5. Draw text along a path [c#](./DrawingTextAlongAPath/)
 
    Draw some text following the contours of a path.
+
+6. Applys an image effect only inside a shape [c#](./ApplyEffectInsideShape/)
+
+   Provides a working example on how to compose various process together to apply a blur but only to a portion of the image specified by a shape.
+
+6. Create an entire new image processor [c#](./CustomImageProcessor/)
+
+   Also provides a working example of implementing a custom image processor

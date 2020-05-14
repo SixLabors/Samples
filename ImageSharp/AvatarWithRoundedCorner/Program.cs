@@ -2,10 +2,10 @@
 // Licensed under the Apache License, Version 2.0.
 
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
-using SixLabors.Shapes;
 
 namespace AvatarWithRoundedCorner
 {
@@ -35,7 +35,7 @@ namespace AvatarWithRoundedCorner
                 // the original `img` object has not been altered at all.
             }
         }
-        
+
         // Implements a full image mutating pipeline operating on IImageProcessingContext
         private static IImageProcessingContext ConvertToAvatar(this IImageProcessingContext processingContext, Size size, float cornerRadius)
         {
@@ -45,7 +45,7 @@ namespace AvatarWithRoundedCorner
                 Mode = ResizeMode.Crop
             }).ApplyRoundedCorners(cornerRadius);
         }
-        
+
 
         // This method can be seen as an inline implementation of an `IImageProcessor`:
         // (The combination of `IImageOperations.Apply()` + this could be replaced with an `IImageProcessor`)
@@ -54,12 +54,19 @@ namespace AvatarWithRoundedCorner
             Size size = ctx.GetCurrentSize();
             IPathCollection corners = BuildCorners(size.Width, size.Height, cornerRadius);
 
-            var graphicOptions = new GraphicsOptions(true) {
+            ctx.SetGraphicsOptions(new GraphicsOptions()
+            {
+                Antialias = true,
                 AlphaCompositionMode = PixelAlphaCompositionMode.DestOut // enforces that any part of this shape that has color is punched out of the background
-            };
+            });
+            
             // mutating in here as we already have a cloned original
             // use any color (not Transparent), so the corners will be clipped
-            return ctx.Fill(graphicOptions, Rgba32.LimeGreen, corners);
+            foreach (var c in corners)
+            {
+                ctx = ctx.Fill(Color.Red, c);
+            }
+            return ctx;
         }
 
         private static IPathCollection BuildCorners(int imageWidth, int imageHeight, float cornerRadius)

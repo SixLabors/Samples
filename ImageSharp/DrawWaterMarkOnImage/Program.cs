@@ -4,9 +4,8 @@
 using System;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 
 namespace DrawWaterMarkOnImage
 {
@@ -61,16 +60,16 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
         private static IImageProcessingContext ApplyScalingWaterMarkSimple(this IImageProcessingContext processingContext,
             Font font,
             string text,
-            Color color, 
+            Color color,
             float padding)
         {
             Size imgSize = processingContext.GetCurrentSize();
-            
+
             float targetWidth = imgSize.Width - (padding * 2);
             float targetHeight = imgSize.Height - (padding * 2);
 
             // measure the text size
-            SizeF size = TextMeasurer.Measure(text, new RendererOptions(font));
+            FontRectangle size = TextMeasurer.Measure(text, new RendererOptions(font));
 
             //find out how much we need to scale the text to fill the space (up or down)
             float scalingFactor = Math.Min(imgSize.Width / size.Width, imgSize.Height / size.Height);
@@ -79,9 +78,12 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
             Font scaledFont = new Font(font, scalingFactor * font.Size);
 
             var center = new PointF(imgSize.Width / 2, imgSize.Height / 2);
-            var textGraphicOptions = new TextGraphicsOptions(true) {
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
+            var textGraphicOptions = new TextGraphicsOptions()
+            {
+                TextOptions = {
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                }
             };
             return processingContext.DrawText(textGraphicOptions, text, scaledFont, color, center);
         }
@@ -102,7 +104,7 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
             // reflow we need to just try multiple times
 
             var scaledFont = font;
-            SizeF s = new SizeF(float.MaxValue, float.MaxValue);
+            FontRectangle s = new FontRectangle(0, 0, float.MaxValue, float.MaxValue);
 
             float scaleFactor = (scaledFont.Size / 2); // every time we change direction we half this size
             int trapCount = (int)scaledFont.Size * 2;
@@ -144,10 +146,13 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
             }
 
             var center = new PointF(padding, imgSize.Height / 2);
-            var textGraphicOptions = new TextGraphicsOptions(true) {
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Center,
-                WrapTextWidth = targetWidth
+            var textGraphicOptions = new TextGraphicsOptions()
+            {
+                TextOptions = {
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    WrapTextWidth = targetWidth
+                }
             };
             return processingContext.DrawText(textGraphicOptions, text, scaledFont, color, center);
         }
