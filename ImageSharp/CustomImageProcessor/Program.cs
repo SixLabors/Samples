@@ -42,20 +42,20 @@ namespace ResizeImage
         /// <returns></returns>
         public static IImageProcessingContext ProcessInsideShape(this IImageProcessingContext context, IPath path, Action<IImageProcessingContext> innerProcessingOperations)
         {
-            return context.ApplyProcessor(new RecursiveImageProcessor(context.GetShapeGraphicsOptions(), path, innerProcessingOperations));
+            return context.ApplyProcessor(new RecursiveImageProcessor(context.GetDrawingOptions(), path, innerProcessingOperations));
         }
     }
 
     // This is the root pixel type agnostic image processor.
     public class RecursiveImageProcessor : IImageProcessor
     {
-        public RecursiveImageProcessor(ShapeGraphicsOptions options, IPath path, Action<IImageProcessingContext> innerProcessing)
+        public RecursiveImageProcessor(DrawingOptions options, IPath path, Action<IImageProcessingContext> innerProcessing)
         {
             this.Options = options;
             this.Path = path;
             this.InnerProcessingOperations = innerProcessing;
         }
-        public ShapeGraphicsOptions Options { get; }
+        public DrawingOptions Options { get; }
         public IPath Path { get; }
 
         public Action<IImageProcessingContext> InnerProcessingOperations { get; }

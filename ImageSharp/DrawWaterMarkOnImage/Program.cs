@@ -78,7 +78,7 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
             Font scaledFont = new Font(font, scalingFactor * font.Size);
 
             var center = new PointF(imgSize.Width / 2, imgSize.Height / 2);
-            var textGraphicOptions = new TextGraphicsOptions()
+            var textGraphicOptions = new DrawingOptions()
             {
                 TextOptions = {
                     HorizontalAlignment = HorizontalAlignment.Center,
@@ -146,7 +146,7 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
             }
 
             var center = new PointF(padding, imgSize.Height / 2);
-            var textGraphicOptions = new TextGraphicsOptions()
+            var textGraphicOptions = new DrawingOptions()
             {
                 TextOptions = {
                     HorizontalAlignment = HorizontalAlignment.Left,
