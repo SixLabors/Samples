@@ -9,7 +9,7 @@ const int QrCodeSize = 25;
 bool[,] pattern = GetQrPattern();
 
 // L8 is a grayscale pixel format storing a single 8-bit (1 byte) channel of luminance per pixel.
-// Do not forget to Dispose Image<L8> in your app! We do it by a using statement in this example:
+// Make sure to Dispose() the image in your app! We do it by a using statement in this example:
 using Image<L8> image = RenderQrCodeToImage(pattern, 10);
 
 string fileName = Path.Combine(Directory.GetCurrentDirectory(), "qr.png");
