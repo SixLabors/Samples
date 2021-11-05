@@ -2,8 +2,6 @@
 // Licensed under the Apache License, Version 2.0.
 
 using System;
-using System.Linq;
-using System.Numerics;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing;
@@ -35,13 +33,12 @@ namespace DrawingTextAlongAPath
                 var font = SystemFonts.CreateFont("Arial", 39, FontStyle.Regular);
 
                 string text = "Hello World Hello World Hello World Hello World Hello World";
-                var textGraphicsOptions = new DrawingOptions() // draw the text along the path wrapping at the end of the line
+                var textGraphicsOptions = new TextGraphicsOptions() // draw the text along the path wrapping at the end of the line
                 {
                     TextOptions = {
-                        WrapTextWidth = GetLength(path)
+                        WrapTextWidth = path.Length
                     }
                 };
-                
 
                 // lets generate the text as a set of vectors drawn along the path
 
@@ -104,7 +101,7 @@ namespace DrawingTextAlongAPath
 
             var center = new PointF(imgSize.Width / 2, imgSize.Height / 2);
 
-            var textGraphicsOptions = new DrawingOptions()
+            var textGraphicsOptions = new TextGraphicsOptions()
             {
                 TextOptions = {
                     HorizontalAlignment = HorizontalAlignment.Center,
@@ -173,7 +170,7 @@ namespace DrawingTextAlongAPath
             }
 
             var center = new PointF(padding, imgSize.Height / 2);
-            var textGraphicsOptions = new DrawingOptions()
+            var textGraphicsOptions = new TextGraphicsOptions()
             {
                 TextOptions = {
                     HorizontalAlignment = HorizontalAlignment.Left,
@@ -182,19 +179,6 @@ namespace DrawingTextAlongAPath
                 }
             };
             return processingContext.DrawText(textGraphicsOptions, text, scaledFont, color, center);
-        }
-        
-        private static float GetLength(IPath path)
-        {
-            ISimplePath simplePath = path.Flatten().Single();
-            ReadOnlySpan<PointF> points = simplePath.Points.Span;
-            float length = 0;
-            for (int i = 0; i < points.Length - 1; i++)
-            {
-                length += Vector2.Distance(points[i], points[i + 1]);
-            }
-
-            return length;
         }
     }
 }
