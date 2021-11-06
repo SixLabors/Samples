@@ -1,12 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 
 const int QrCodeSize = 25;
-
 bool[,] pattern = GetQrPattern();
 
 // L8 is a grayscale pixel format storing a single 8-bit (1 byte) channel of luminance per pixel.
