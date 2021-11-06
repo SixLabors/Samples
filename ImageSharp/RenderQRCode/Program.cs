@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
@@ -85,44 +86,36 @@ static Image<L8> RenderQrCodeToImage(bool[,] pattern, int pixelSize)
     return image;
 }
 
-// Made with http://asciiqr.com/
-const string AsciiQr = @"
-█▀▀▀▀▀█ ▀▀   ▀ ▀▀ █▀▀▀▀▀█
-█ ███ █ █▄ █▀█▄█▀ █ ███ █
-█ ▀▀▀ █ ▀█▀▀▄ █ ▀ █ ▀▀▀ █
-▀▀▀▀▀▀▀ ▀▄▀▄▀ █▄▀ ▀▀▀▀▀▀▀
-██▀█  ▀▄█▄   ▀█  ▀ ▄▀▀▀▄▀
- ▄  ▀▄▀▀▀  ▄▄█▀▄▀█▀▄ ▄▄  
- █ ▄  ▀▀▄▀▄█ ▀▀▄ ▀█▄█ ▀▀█
-▄▀▄ ▄▀▀▀▄▀▀ █  ▄ ▀▄▄█ ▀▀▄
-  ▀   ▀ ▄ █▀▄ ▄██▀▀▀█▀█▀█
-█▀▀▀▀▀█   ▄▀█▀▄▄█ ▀ █ ▀██
-█ ███ █ ▄▀▀▀██ ▄▀▀█▀██▄█▄
-█ ▀▀▀ █ █▀█▀▀▀ ▀▀██ █ █▀ 
-▀▀▀▀▀▀▀ ▀▀  ▀ ▀    ▀▀▀▀▀▀
-";
-
 static bool[,] GetQrPattern()
 {
-    bool[,] pattern = new bool[QrCodeSize, QrCodeSize];
-
-    ReadOnlySpan<char> qrStr = AsciiQr.AsSpan(2); // slice away first \r\n
-    
-    for (int y = 0; y < QrCodeSize; y+=2)
+    const bool o = true;
+    const bool _ = false;
+    return new [,]
     {
-        for (int x = 0; x < QrCodeSize; x++)
-        {
-            char codeChar = qrStr[(y / 2) * (QrCodeSize + 2) + x];
-            pattern[x, y] = codeChar switch { '█' => false, '▀' => false, _ => true };
-            
-            if (y + 1 < QrCodeSize)
-            {
-                pattern[x, y + 1] = codeChar switch { '█' => false, '▄' => false, _ => true };
-            }
-        }
-    }
-
-    return pattern;
+        { _, _, _, _, _, _, _, o, _, _, o, o, o, _, o, _, _, o, _, _, _, _, _, _, _ },
+        { _, o, o, o, o, o, _, o, o, o, o, o, o, o, o, o, o, o, _, o, o, o, o, o, _ },
+        { _, o, _, _, _, o, _, o, _, o, o, _, _, _, o, _, _, o, _, o, _, _, _, o, _ },
+        { _, o, _, _, _, o, _, o, _, _, o, _, o, _, _, _, o, o, _, o, _, _, _, o, _ },
+        { _, o, _, _, _, o, _, o, _, _, _, _, o, o, _, o, _, o, _, o, _, _, _, o, _ },
+        { _, o, o, o, o, o, _, o, o, _, o, o, _, o, _, o, o, o, _, o, o, o, o, o, _ },
+        { _, _, _, _, _, _, _, o, _, o, _, o, _, o, _, o, _, o, _, _, _, _, _, _, _ },
+        { o, o, o, o, o, o, o, o, o, _, o, _, o, o, _, _, o, o, o, o, o, o, o, o, o },
+        { _, _, _, _, o, o, _, o, _, o, o, o, o, _, _, o, o, _, o, o, _, _, _, o, _ },
+        { _, _, o, _, o, o, o, _, _, _, o, o, o, o, _, o, o, o, o, _, o, o, o, _, o },
+        { o, o, o, o, _, o, _, _, _, o, o, o, o, _, _, o, _, _, _, o, o, o, o, o, o },
+        { o, _, o, o, o, _, o, o, o, o, o, _, _, _, o, _, o, _, o, _, o, _, _, o, o },
+        { o, _, o, o, o, o, _, _, o, _, o, _, o, _, _, o, o, _, _, o, _, o, _, _, _ },
+        { o, _, o, _, o, o, o, o, _, o, _, _, o, o, o, _, o, o, _, _, _, o, o, o, _ },
+        { o, _, o, o, o, _, _, _, o, _, _, o, _, o, o, o, o, _, o, o, _, o, _, _, o },
+        { _, o, _, o, _, o, o, o, _, o, o, o, _, o, o, _, o, o, _, _, _, o, o, o, _ },
+        { o, o, _, o, o, o, _, o, o, o, _, _, o, o, o, _, _, _, _, _, _, _, _, _, _ },
+        { o, o, o, o, o, o, o, o, _, o, _, o, _, o, _, _, _, o, o, o, _, o, _, o, _ },
+        { _, _, _, _, _, _, _, o, o, o, o, _, _, _, o, o, _, o, _, o, _, o, _, _, _ },
+        { _, o, o, o, o, o, _, o, o, o, _, o, _, o, _, _, _, o, o, o, _, o, o, _, _ },
+        { _, o, _, _, _, o, _, o, o, _, _, _, _, _, o, o, _, _, _, _, _, _, o, _, o },
+        { _, o, _, _, _, o, _, o, _, o, o, o, _, _, o, _, o, o, _, o, _, _, _, _, _ },
+        { _, o, _, _, _, o, _, o, _, _, _, _, _, _, o, _, _, _, _, o, _, o, _, _, o },
+        { _, o, o, o, o, o, _, o, _, o, _, o, o, o, o, o, o, _, _, o, _, o, _, o, o },
+        { _, _, _, _, _, _, _, o, _, _, o, o, _, o, _, o, o, o, o, _, _, _, _, _, _ },
+    };
 }
-
-
