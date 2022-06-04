@@ -31,55 +31,31 @@ static Image<L8> RenderQrCodeToImage(bool[,] pattern, int pixelSize)
     L8 black = new L8(0);
     L8 white = new L8(255);
 
-    // Scan the QR pattern row-by-row
-    for (int yQr = 0; yQr < QrCodeSize; yQr++)
+    image.ProcessPixelRows(pixelAccessor =>
     {
-        // Fill 'pixelSize' number image rows that correspond to the current QR pattern row:
-        for (int y = yQr * pixelSize; y < (yQr + 1) * pixelSize; y++)
+        // Scan the QR pattern row-by-row
+        for (int yQr = 0; yQr < QrCodeSize; yQr++)
         {
-            // Get a Span<L8> of pixels for the current image row:
-            Span<L8> pixelRow = image.GetPixelRowSpan(y);
-            
-            // Loop through the values for the current QR pattern row:
-            for (int xQr = 0; xQr < QrCodeSize; xQr++)
+            // Fill 'pixelSize' number image rows that correspond to the current QR pattern row:
+            for (int y = yQr * pixelSize; y < (yQr + 1) * pixelSize; y++)
             {
-                L8 color = pattern[xQr, yQr] ? white : black;
-                
-                // Fill 'pixelSize' number of image pixels corresponding to the current QR pattern value:
-                for (int x = xQr * pixelSize; x < (xQr + 1) * pixelSize; x++)
+                // Get a Span<L8> of pixels for the current image row:
+                Span<L8> pixelRow = pixelAccessor.GetRowSpan(y);
+
+                // Loop through the values for the current QR pattern row:
+                for (int xQr = 0; xQr < QrCodeSize; xQr++)
                 {
-                    pixelRow[x] = color;
+                    L8 color = pattern[xQr, yQr] ? white : black;
+
+                    // Fill 'pixelSize' number of image pixels corresponding to the current QR pattern value:
+                    for (int x = xQr * pixelSize; x < (xQr + 1) * pixelSize; x++)
+                    {
+                        pixelRow[x] = color;
+                    }
                 }
             }
         }
-    }
-    
-    // ImageSharp 2.0 variant:
-    // image.ProcessPixelRows(pixelAccessor =>
-    // {
-    //     // Scan the QR pattern row-by-row
-    //     for (int yQr = 0; yQr < QrCodeSize; yQr++)
-    //     {
-    //         // Fill 'pixelSize' number image rows that correspond to the current QR pattern row:
-    //         for (int y = yQr * pixelSize; y < (yQr + 1) * pixelSize; y++)
-    //         {
-    //             // Get a Span<L8> of pixels for the current image row:
-    //             Span<L8> pixelRow = pixelAccessor.GetRowSpan(y);
-    //
-    //             // Loop through the values for the current QR pattern row:
-    //             for (int xQr = 0; xQr < QrCodeSize; xQr++)
-    //             {
-    //                 L8 color = pattern[xQr, yQr] ? white : black;
-    //
-    //                 // Fill 'pixelSize' number of image pixels corresponding to the current QR pattern value:
-    //                 for (int x = xQr * pixelSize; x < (xQr + 1) * pixelSize; x++)
-    //                 {
-    //                     pixelRow[x] = color;
-    //                 }
-    //             }
-    //         }
-    //     }
-    // });
+    });
 
     return image;
 }
@@ -88,7 +64,7 @@ static bool[,] GetQrPattern()
 {
     const bool o = true;
     const bool _ = false;
-    return new [,]
+    return new[,]
     {
         { _, _, _, _, _, _, _, o, _, _, o, o, o, _, o, _, _, o, _, _, _, _, _, _, _ },
         { _, o, o, o, o, o, _, o, o, o, o, o, o, o, o, o, o, o, _, o, o, o, o, o, _ },
