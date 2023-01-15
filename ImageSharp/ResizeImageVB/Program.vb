@@ -1,4 +1,3 @@
-Imports System
 Imports System.IO
 Imports SixLabors.ImageSharp
 Imports SixLabors.ImageSharp.Processing

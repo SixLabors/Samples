@@ -1,9 +1,7 @@
 ﻿// Copyright (c) Six Labors and contributors.
 // Licensed under the Apache License, Version 2.0.
 
-using System.Numerics;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
 namespace ResizeImage
@@ -14,14 +12,12 @@ namespace ResizeImage
         {
             System.IO.Directory.CreateDirectory("output");
 
-            using (Image image = Image.Load("fb.jpg"))
-            {
-                image.Mutate(x => x
-                     .Resize(image.Width / 2, image.Height / 2)
-                     .Grayscale());
+            using Image image = Image.Load("fb.jpg");
+            image.Mutate(x => x
+                 .Resize(image.Width / 2, image.Height / 2)
+                 .Grayscale());
 
-                image.Save("output/fb.png"); // Automatic encoder selected based on extension.
-            }
+            image.Save("output/fb.png"); // Automatic encoder selected based on extension.
         }
     }
 }
