@@ -220,3 +220,6 @@ artifacts/
 **/output/*.jpeg
 **/output/*.bmp
 **/output/*.gif
+ImageSharp/AvatarWithRoundedCorner/fb.png
+ImageSharp/AvatarWithRoundedCorner/fb-rounder.png
+ImageSharp/AvatarWithRoundedCorner/fb-round.png
