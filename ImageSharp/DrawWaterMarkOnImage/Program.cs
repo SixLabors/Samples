@@ -69,7 +69,7 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
             float targetHeight = imgSize.Height - (padding * 2);
 
             // Measure the text size
-            FontRectangle size = TextMeasurer.Measure(text, new TextOptions(font));
+            FontRectangle size = TextMeasurer.MeasureSize(text, new TextOptions(font));
 
             // Find out how much we need to scale the text to fill the space (up or down)
             float scalingFactor = Math.Min(targetWidth / size.Width, targetHeight / size.Height);
@@ -78,7 +78,7 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
             Font scaledFont = new Font(font, scalingFactor * font.Size);
 
             var center = new PointF(imgSize.Width / 2, imgSize.Height / 2);
-            var textOptions = new TextOptions(scaledFont)
+            var textOptions = new RichTextOptions(scaledFont)
             {
                 Origin = center,
                 HorizontalAlignment = HorizontalAlignment.Center,
@@ -137,14 +137,14 @@ Pellentesque fermentum vitae lacus non aliquet. Sed nulla ipsum, hendrerit sit a
                 }
                 trapCount--;
 
-                s = TextMeasurer.Measure(text, new TextOptions(scaledFont)
+                s = TextMeasurer.MeasureSize(text, new TextOptions(scaledFont)
                 {
                     WrappingLength = targetWidth
                 });
             }
 
             var center = new PointF(padding, imgSize.Height / 2);
-            var textOptions = new TextOptions(scaledFont)
+            var textOptions = new RichTextOptions(scaledFont)
             {
                 Origin = center,
                 HorizontalAlignment = HorizontalAlignment.Left,

@@ -79,7 +79,7 @@ namespace DrawingTextAlongAPath
             Size imgSize = processingContext.GetCurrentSize();
 
             // Measure the text size
-            FontRectangle size = TextMeasurer.Measure(text, new TextOptions(font));
+            FontRectangle size = TextMeasurer.MeasureSize(text, new TextOptions(font));
 
             // Find out how much we need to scale the text to fill the space (up or down)
             float scalingFactor = Math.Min(imgSize.Width - padding / size.Width, imgSize.Height - padding / size.Height);
@@ -88,7 +88,7 @@ namespace DrawingTextAlongAPath
             Font scaledFont = new Font(font, scalingFactor * font.Size);
 
             var center = new PointF(imgSize.Width / 2, imgSize.Height / 2);
-            var textOptions = new TextOptions(scaledFont)
+            var textOptions = new RichTextOptions(scaledFont)
             {
                 Origin = center,
                 HorizontalAlignment = HorizontalAlignment.Center,
