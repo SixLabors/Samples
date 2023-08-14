@@ -21,8 +21,6 @@ image.SaveAsPng(fileName, new PngEncoder()
 });
 Console.WriteLine($"Saved to: {fileName}");
 
-// ImageSharp 2.0 will break this method: https://github.com/SixLabors/ImageSharp/issues/1739
-// We will update the example after the release. See ImageSharp 2.0 variant in comments.
 static Image<L8> RenderQrCodeToImage(bool[,] pattern, int pixelSize)
 {
     int imageSize = pixelSize * QrCodeSize;
