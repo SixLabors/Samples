@@ -24,6 +24,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApplyEffectInsideShape", "I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderQRCode", "ImageSharp\RenderQRCode\RenderQRCode.csproj", "{1E3CB608-7481-4FE1-BB84-B3FFCC1F9A68}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlurMultiplePartsOfImage", "ImageSharp\BlurMultiplePartsOfImage\BlurMultiplePartsOfImage.csproj", "{8B9FFC25-CC69-4212-AF0B-F26CA8FEBDB1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{1E3CB608-7481-4FE1-BB84-B3FFCC1F9A68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E3CB608-7481-4FE1-BB84-B3FFCC1F9A68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E3CB608-7481-4FE1-BB84-B3FFCC1F9A68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B9FFC25-CC69-4212-AF0B-F26CA8FEBDB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B9FFC25-CC69-4212-AF0B-F26CA8FEBDB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B9FFC25-CC69-4212-AF0B-F26CA8FEBDB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B9FFC25-CC69-4212-AF0B-F26CA8FEBDB1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,6 +81,7 @@ Global
 		{5BD7AD82-F99B-44D0-8B14-46B00CFF37FF} = {CA7BA24E-2681-4ECF-93FB-404D9505D25F}
 		{7612FC88-232B-408C-9F5B-3B6C9726BCD8} = {CA7BA24E-2681-4ECF-93FB-404D9505D25F}
 		{1E3CB608-7481-4FE1-BB84-B3FFCC1F9A68} = {CA7BA24E-2681-4ECF-93FB-404D9505D25F}
+		{8B9FFC25-CC69-4212-AF0B-F26CA8FEBDB1} = {CA7BA24E-2681-4ECF-93FB-404D9505D25F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7830D804-EBC6-48A3-9189-BA0B67811CEA}
