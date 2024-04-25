@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 
 namespace CustomImageProcessor
 {
@@ -19,6 +20,16 @@ namespace CustomImageProcessor
         {
             public RectangleF Rect { get; set; }
             public bool Blur { get; set; }
+            public float Rotation { get; set; } = 0;
+
+            public IPath AsPath()
+                => new RectangularPolygon(Rect.X, Rect.Y, Rect.Width, Rect.Height)
+                    .Transform(
+                        Matrix3x2Extensions.CreateRotationDegrees(
+                            Rotation,
+                            new PointF((Rect.Width / 2 + Rect.X), (Rect.Height / 2 + Rect.Y))
+                        )
+                    );
         }
 
         static void Main(string[] args)
@@ -37,12 +48,14 @@ namespace CustomImageProcessor
                 new BlurRegion()
                 {
                     Rect = new RectangleF(70, 20, 150, 150),
-                        Blur = true,
+                    Blur = true,
+                    Rotation = -10f,
                 },
                 new BlurRegion()
                 {
                     Rect = new RectangleF(120, 120, 20, 20),
                     Blur = false,
+                    Rotation = -20f,
                 },
                 new BlurRegion()
                 {
@@ -53,6 +66,7 @@ namespace CustomImageProcessor
                 {
                     Rect = new RectangleF(170, 115, 20, 20),
                     Blur = false,
+                    Rotation = 20f,
                 },
             };
 
@@ -70,7 +84,7 @@ namespace CustomImageProcessor
         private static IImageProcessingContext BlurRegionsCombined(this IImageProcessingContext processingContext, IEnumerable<BlurRegion> blurRegions)
         {
             var blurPaths = blurRegions.Where(x => x.Blur == true)
-                .Select(x => new RectangularPolygon(x.Rect.X, x.Rect.Y, x.Rect.Width, x.Rect.Height)) // this can be any polygon/path not just rectangles
+                .Select(x => x.AsPath())
                 .ToList();
 
             // use the first shape as the shape to combine into
@@ -86,7 +100,7 @@ namespace CustomImageProcessor
 
             // now we have some blurs lets start choping out regions to leave unblured
             var unblurPaths = blurRegions.Where(x => x.Blur == false)
-                .Select(x => new RectangularPolygon(x.Rect.X, x.Rect.Y, x.Rect.Width, x.Rect.Height)) // this can be any polygon/path not just rectangles
+                .Select(x => x.AsPath())
                 .ToList();
 
             if (unblurPaths.Count > 0)
@@ -102,22 +116,18 @@ namespace CustomImageProcessor
         // the order of blur/unblur will effect the outcome in this verion
         private static IImageProcessingContext BlurRegionsLayered(this IImageProcessingContext processingContext, IEnumerable<BlurRegion> blurRegions)
         {
-            var paths = blurRegions
-                .Select(x => (x.Blur, path: new RectangularPolygon(x.Rect.X, x.Rect.Y, x.Rect.Width, x.Rect.Height))) // this can be any polygon/path not just rectangles
-                .ToList();
-
             IPath path = null;
-            foreach (var p in paths)
+            foreach (var p in blurRegions)
             {
                 if (p.Blur)
                 {
                     if (path == null)
                     {
-                        path = p.path;
+                        path = p.AsPath();
                     }
                     else
                     {
-                        path = path.Clip(new ShapeOptions() { ClippingOperation = ClippingOperation.Union }, p.path);
+                        path = path.Clip(new ShapeOptions() { ClippingOperation = ClippingOperation.Union }, p.AsPath());
                     }
                 }
                 else
@@ -128,7 +138,7 @@ namespace CustomImageProcessor
                     }
                     else
                     {
-                        path = path.Clip(new ShapeOptions() { ClippingOperation = ClippingOperation.Difference }, p.path);
+                        path = path.Clip(new ShapeOptions() { ClippingOperation = ClippingOperation.Difference }, p.AsPath());
                     }
                 }
             }
