@@ -21,15 +21,13 @@ image.SaveAsPng(fileName, new PngEncoder()
 });
 Console.WriteLine($"Saved to: {fileName}");
 
-// ImageSharp 2.0 will break this method: https://github.com/SixLabors/ImageSharp/issues/1739
-// We will update the example after the release. See ImageSharp 2.0 variant in comments.
 static Image<L8> RenderQrCodeToImage(bool[,] pattern, int pixelSize)
 {
     int imageSize = pixelSize * QrCodeSize;
-    Image<L8> image = new Image<L8>(imageSize, imageSize);
+    Image<L8> image = new(imageSize, imageSize);
 
-    L8 black = new L8(0);
-    L8 white = new L8(255);
+    L8 black = new(0);
+    L8 white = new(255);
 
     image.ProcessPixelRows(pixelAccessor =>
     {
@@ -62,34 +60,34 @@ static Image<L8> RenderQrCodeToImage(bool[,] pattern, int pixelSize)
 
 static bool[,] GetQrPattern()
 {
-    const bool o = true;
-    const bool _ = false;
+    const bool _ = true;
+    const bool x = false;
     return new[,]
     {
-        { _, _, _, _, _, _, _, o, _, _, o, o, o, _, o, _, _, o, _, _, _, _, _, _, _ },
-        { _, o, o, o, o, o, _, o, o, o, o, o, o, o, o, o, o, o, _, o, o, o, o, o, _ },
-        { _, o, _, _, _, o, _, o, _, o, o, _, _, _, o, _, _, o, _, o, _, _, _, o, _ },
-        { _, o, _, _, _, o, _, o, _, _, o, _, o, _, _, _, o, o, _, o, _, _, _, o, _ },
-        { _, o, _, _, _, o, _, o, _, _, _, _, o, o, _, o, _, o, _, o, _, _, _, o, _ },
-        { _, o, o, o, o, o, _, o, o, _, o, o, _, o, _, o, o, o, _, o, o, o, o, o, _ },
-        { _, _, _, _, _, _, _, o, _, o, _, o, _, o, _, o, _, o, _, _, _, _, _, _, _ },
-        { o, o, o, o, o, o, o, o, o, _, o, _, o, o, _, _, o, o, o, o, o, o, o, o, o },
-        { _, _, _, _, o, o, _, o, _, o, o, o, o, _, _, o, o, _, o, o, _, _, _, o, _ },
-        { _, _, o, _, o, o, o, _, _, _, o, o, o, o, _, o, o, o, o, _, o, o, o, _, o },
-        { o, o, o, o, _, o, _, _, _, o, o, o, o, _, _, o, _, _, _, o, o, o, o, o, o },
-        { o, _, o, o, o, _, o, o, o, o, o, _, _, _, o, _, o, _, o, _, o, _, _, o, o },
-        { o, _, o, o, o, o, _, _, o, _, o, _, o, _, _, o, o, _, _, o, _, o, _, _, _ },
-        { o, _, o, _, o, o, o, o, _, o, _, _, o, o, o, _, o, o, _, _, _, o, o, o, _ },
-        { o, _, o, o, o, _, _, _, o, _, _, o, _, o, o, o, o, _, o, o, _, o, _, _, o },
-        { _, o, _, o, _, o, o, o, _, o, o, o, _, o, o, _, o, o, _, _, _, o, o, o, _ },
-        { o, o, _, o, o, o, _, o, o, o, _, _, o, o, o, _, _, _, _, _, _, _, _, _, _ },
-        { o, o, o, o, o, o, o, o, _, o, _, o, _, o, _, _, _, o, o, o, _, o, _, o, _ },
-        { _, _, _, _, _, _, _, o, o, o, o, _, _, _, o, o, _, o, _, o, _, o, _, _, _ },
-        { _, o, o, o, o, o, _, o, o, o, _, o, _, o, _, _, _, o, o, o, _, o, o, _, _ },
-        { _, o, _, _, _, o, _, o, o, _, _, _, _, _, o, o, _, _, _, _, _, _, o, _, o },
-        { _, o, _, _, _, o, _, o, _, o, o, o, _, _, o, _, o, o, _, o, _, _, _, _, _ },
-        { _, o, _, _, _, o, _, o, _, _, _, _, _, _, o, _, _, _, _, o, _, o, _, _, o },
-        { _, o, o, o, o, o, _, o, _, o, _, o, o, o, o, o, o, _, _, o, _, o, _, o, o },
-        { _, _, _, _, _, _, _, o, _, _, o, o, _, o, _, o, o, o, o, _, _, _, _, _, _ },
+        { x, x, x, x, x, x, x, _, x, x, _, _, _, x, _, x, x, _, x, x, x, x, x, x, x },
+        { x, _, _, _, _, _, x, _, _, _, _, _, _, _, _, _, _, _, x, _, _, _, _, _, x },
+        { x, _, x, x, x, _, x, _, x, _, _, x, x, x, _, x, x, _, x, _, x, x, x, _, x },
+        { x, _, x, x, x, _, x, _, x, x, _, x, _, x, x, x, _, _, x, _, x, x, x, _, x },
+        { x, _, x, x, x, _, x, _, x, x, x, x, _, _, x, _, x, _, x, _, x, x, x, _, x },
+        { x, _, _, _, _, _, x, _, _, x, _, _, x, _, x, _, _, _, x, _, _, _, _, _, x },
+        { x, x, x, x, x, x, x, _, x, _, x, _, x, _, x, _, x, _, x, x, x, x, x, x, x },
+        { _, _, _, _, _, _, _, _, _, x, _, x, _, _, x, x, _, _, _, _, _, _, _, _, _ },
+        { x, x, x, x, _, _, x, _, x, _, _, _, _, x, x, _, _, x, _, _, x, x, x, _, x },
+        { x, x, _, x, _, _, _, x, x, x, _, _, _, _, x, _, _, _, _, x, _, _, _, x, _ },
+        { _, _, _, _, x, _, x, x, x, _, _, _, _, x, x, _, x, x, x, _, _, _, _, _, _ },
+        { _, x, _, _, _, x, _, _, _, _, _, x, x, x, _, x, _, x, _, x, _, x, x, _, _ },
+        { _, x, _, _, _, _, x, x, _, x, _, x, _, x, x, _, _, x, x, _, x, _, x, x, x },
+        { _, x, _, x, _, _, _, _, x, _, x, x, _, _, _, x, _, _, x, x, x, _, _, _, x },
+        { _, x, _, _, _, x, x, x, _, x, x, _, x, _, _, _, _, x, _, _, x, _, x, x, _ },
+        { x, _, x, _, x, _, _, _, x, _, _, _, x, _, _, x, _, _, x, x, x, _, _, _, x },
+        { _, _, x, _, _, _, x, _, _, _, x, x, _, _, _, x, x, x, x, x, x, x, x, x, x },
+        { _, _, _, _, _, _, _, _, x, _, x, _, x, _, x, x, x, _, _, _, x, _, x, _, x },
+        { x, x, x, x, x, x, x, _, _, _, _, x, x, x, _, _, x, _, x, _, x, _, x, x, x },
+        { x, _, _, _, _, _, x, _, _, _, x, _, x, _, x, x, x, _, _, _, x, _, _, x, x },
+        { x, _, x, x, x, _, x, _, _, x, x, x, x, x, _, _, x, x, x, x, x, x, _, x, _ },
+        { x, _, x, x, x, _, x, _, x, _, _, _, x, x, _, x, _, _, x, _, x, x, x, x, x },
+        { x, _, x, x, x, _, x, _, x, x, x, x, x, x, _, x, x, x, x, _, x, _, x, x, _ },
+        { x, _, _, _, _, _, x, _, x, _, x, _, _, _, _, _, _, x, x, _, x, _, x, _, _ },
+        { x, x, x, x, x, x, x, _, x, x, _, _, x, _, x, _, _, _, _, x, x, x, x, x, x },
     };
 }

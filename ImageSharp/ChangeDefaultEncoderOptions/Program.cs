@@ -10,8 +10,7 @@ namespace ChangeDefaultEncoderOptions
     {
         static void Main(string[] args)
         {
-            // lets switch out the default encoder for jpeg to one
-            // that saves at 90 quality
+            // Let's switch out the default encoder for jpeg to one that saves at 90 quality
             Configuration.Default.ImageFormatsManager.SetEncoder(JpegFormat.Instance, new JpegEncoder()
             {
                 Quality = 90
