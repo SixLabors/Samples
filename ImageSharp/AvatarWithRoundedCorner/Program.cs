@@ -14,26 +14,25 @@ namespace AvatarWithRoundedCorner
         static void Main(string[] args)
         {
             System.IO.Directory.CreateDirectory("output");
-            using (var img = Image.Load("fb.jpg"))
+            using var img = Image.Load("fb.jpg");
+
+            // As Clone returns a new image make sure we dispose of it
+            using (Image destRound = img.Clone(x => x.ConvertToAvatar(new Size(200, 200), 20)))
             {
-                // As Clone returns a new image make sure we dispose of it
-                using (Image destRound = img.Clone(x => x.ConvertToAvatar(new Size(200, 200), 20)))
-                {
-                    destRound.Save("output/fb.png");
-                }
-
-                using (Image destRound = img.Clone(x => x.ConvertToAvatar(new Size(200, 200), 100)))
-                {
-                    destRound.Save("output/fb-round.png");
-                }
-
-                using (Image destRound = img.Clone(x => x.ConvertToAvatar(new Size(200, 200), 150)))
-                {
-                    destRound.Save("output/fb-rounder.png");
-                }
-
-                // The original `img` object has not been altered at all.
+                destRound.Save("output/fb.png");
             }
+
+            using (Image destRound = img.Clone(x => x.ConvertToAvatar(new Size(200, 200), 100)))
+            {
+                destRound.Save("output/fb-round.png");
+            }
+
+            using (Image destRound = img.Clone(x => x.ConvertToAvatar(new Size(200, 200), 150)))
+            {
+                destRound.Save("output/fb-rounder.png");
+            }
+
+            // The original `img` object has not been altered at all.
         }
 
         // Implements a full image mutating pipeline operating on IImageProcessingContext
@@ -72,7 +71,7 @@ namespace AvatarWithRoundedCorner
             return context;
         }
 
-        private static IPathCollection BuildCorners(int imageWidth, int imageHeight, float cornerRadius)
+        private static PathCollection BuildCorners(int imageWidth, int imageHeight, float cornerRadius)
         {
             // First create a square
             var rect = new RectangularPolygon(-0.5f, -0.5f, cornerRadius, cornerRadius);
