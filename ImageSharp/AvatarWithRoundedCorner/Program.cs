@@ -14,7 +14,7 @@ namespace AvatarWithRoundedCorner
         static void Main(string[] args)
         {
             System.IO.Directory.CreateDirectory("output");
-            using var img = Image.Load("fb.jpg");
+            using var img = Image.Load<Rgba32>("fb.jpg");
 
             // As Clone returns a new image make sure we dispose of it
             using (Image destRound = img.Clone(x => x.ConvertToAvatar(new Size(200, 200), 20)))
