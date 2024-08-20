@@ -14,6 +14,7 @@ namespace DrawingTextAlongAPath
     {
         static void Main(string[] args)
         {
+
             System.IO.Directory.CreateDirectory("output");
 
             using Image img = new Image<Rgba32>(1500, 500);
@@ -24,19 +25,20 @@ namespace DrawingTextAlongAPath
             // Add more complex paths and shapes here.
             IPath path = pathBuilder.Build();
 
-            // For production application we would recommend you create a FontCollection
-            // singleton and manually install the ttf fonts yourself as using SystemFonts
-            // can be expensive and you risk font existing or not existing on a deployment
-            // by deployment basis.
-            Font font = SystemFonts.CreateFont("Segoe UI", 39, FontStyle.Regular);
-            const string text = "Hello World Hello World Hello World Hello World Hello World";
+            var fonts = new FontCollection();
+            var mainFont = fonts.Add("Roboto-Regular.ttf");
+            var emojiiFont = fonts.Add("Twemoji Mozilla.ttf");
+
+            const string text = "Hello World 🎉🎉 Hello World Hello World Hello World Hello World";
 
             // Draw the text along the path wrapping at the end of the line
-            TextOptions textOptions = new(font)
+            RichTextOptions textOptions = new(mainFont.CreateFont(39, FontStyle.Regular))
             {
                 WrappingLength = path.ComputeLength(),
                 VerticalAlignment = VerticalAlignment.Bottom,
                 HorizontalAlignment = HorizontalAlignment.Left,
+                FallbackFontFamilies = [emojiiFont],
+                Path = path
             };
 
             // Let's generate the text as a set of vectors drawn along the path
@@ -45,7 +47,7 @@ namespace DrawingTextAlongAPath
             img.Mutate(ctx => ctx
                 .Fill(Color.White) // white background image
                 .Draw(Color.Gray, 3, path) // draw the path so we can see what the text is supposed to be following
-                .Fill(Color.Black, glyphs));
+                .DrawText(textOptions, text, new SolidBrush(Color.Gray)));
 
             img.Save("output/wordart.png");
         }
