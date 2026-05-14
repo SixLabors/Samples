@@ -10,7 +10,10 @@
     MSBuildAllProjects, as that is done by the file that imports us.
   -->
 
-  <!-- Import the shared global .props file -->
+  <!-- Import the shared global .targets file. -->
   <Import Project="$(MSBuildThisFileDirectory)shared-infrastructure\msbuild\targets\SixLabors.Global.targets"/>
+
+  <!-- Import the shared target that keeps root config files in sync from the submodule. -->
+  <Import Project="$(MSBuildThisFileDirectory)shared-infrastructure\msbuild\targets\SixLabors.Src.targets"/>
 
 </Project>
