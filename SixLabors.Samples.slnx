@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/_root/">
+    <File Path=".editorconfig" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="SixLabors.Samples.WebGPUExternalSurface/SixLabors.Samples.WebGPUExternalSurface.csproj" />
+  <Project Path="SixLabors.Samples.WebGPUWindow/SixLabors.Samples.WebGPUWindow.csproj" Id="b0e8f2e5-8474-4cda-8fe4-f7cf0eeb7ee9" />
+  <Project Path="SixLabors.Samples.Fonts/SixLabors.Samples.Fonts.csproj" />
+  <Project Path="SixLabors.Samples.ImageSharp/SixLabors.Samples.ImageSharp.csproj" />
+  <Project Path="SixLabors.Samples.ImageSharp.SystemDrawingInterop/SixLabors.Samples.ImageSharp.SystemDrawingInterop.csproj" />
+</Solution>

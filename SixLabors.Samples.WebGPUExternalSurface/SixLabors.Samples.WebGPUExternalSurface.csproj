@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" TreatAsLocalProperty="TargetFramework;TargetFrameworks">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>enable</Nullable>
+    <RootNamespace>SixLabors.Samples.WebGPUExternalSurfaceDemo</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SixLabors.ImageSharp.Drawing.WebGPU" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\assets\Ghostscript_Tiger.svg" Link="assets\Ghostscript_Tiger.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    
+  </ItemGroup>
+</Project>

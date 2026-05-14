@@ -215,8 +215,4 @@ artifacts/
 # Build process
 *.csproj.bak
 
-**/output/*.png
-**/output/*.jpg
-**/output/*.jpeg
-**/output/*.bmp
-**/output/*.gif
+output/**
