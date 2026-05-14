@@ -1,6 +1,8 @@
 # Samples
 General samples for various Six Labors projects
 
+This repository uses [Git Large File Storage](https://docs.github.com/en/github/managing-large-files/installing-git-large-file-storage). Please follow the linked instructions to ensure you have it set up in your environment.
+
 ## ImageSharp
 Runnable ImageSharp samples can be found in:
 
